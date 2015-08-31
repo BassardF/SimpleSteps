@@ -1,9 +1,11 @@
 var step = new Stepper({
-	id : "canvas_container",
+	canvasId : "canvas_container",
 	width : 200,
 	height : 200,
-	strokeWidth : 20,
-	innerStrokeWidth : 10,
+	strokeWidth : {
+		bcg : 20,
+		inner : 10
+	},
 	colors : {
 		bcg : '#ccc',
 		inner : 'teal',
@@ -13,15 +15,21 @@ var step = new Stepper({
 	},
 	activeStep : 4,
 	steps : ['step1', 'step2', 'step3', 'step4', 'step5'],
-	swapTime : 0.5,
-	labelFontSize : 20,
-	pecentFontSize : 30,
-	labelFontFamily : 'arial',
-	percentFontFamily : 'arial',
-	labelOffset : 20,
-	percentOffset : 25,
-	unselectedOffset : 15,
-	unselectedFontSize : 10,
+	transitionTime : 0.5,
+	fontSize : {
+		label : 20,
+		percent : 30,
+		unselected : 10
+	},
+	fontFamily : {
+		label : 'arial',
+		percent : 'arial'
+	},
+	offsets : {
+		label : 20,
+		percent : 25,
+		unselected : 15
+	},
 	unselectedOpacity : 0.8
 })
 

@@ -1,23 +1,23 @@
 class Stepper {
     constructor(options) {
-        this.paper = Raphael(document.getElementById(options.id), options.width, options.height);
-        this.bcgCircle = this.paper.circle(options.width/2, options.height/2, options.width/2 - options.strokeWidth).attr({
+        this.paper = Raphael(document.getElementById(options.canvasId), options.width, options.height);
+        this.bcgCircle = this.paper.circle(options.width/2, options.height/2, options.width/2 - options.strokeWidth.bcg).attr({
             stroke : options.colors.bcg,
-            'stroke-width' : options.strokeWidth
+            'stroke-width' : options.strokeWidth.bcg
         });
         this.options = options;
         let stepPct = options.activeStep / options.steps.length;
         if(stepPct === 1){
             stepPct = 0.9999;
         }
-        this.circle = this.sector(false, options.width/2, options.height/2, options.width/2 - options.strokeWidth, 90, stepPct * 360 + 90, {
+        this.circle = this.sector(false, options.width/2, options.height/2, options.width/2 - options.strokeWidth.bcg, 90, stepPct * 360 + 90, {
             stroke : options.colors.inner,
-            'stroke-width' : options.innerStrokeWidth
+            'stroke-width' : options.strokeWidth.inner
         });
-        this.percent = this.paper.text(options.width/2, options.height/2 - this.options.percentOffset, options.activeStep / options.steps.length * 100 + '%').attr({
-            'font-size' : this.options.pecentFontSize,
+        this.percent = this.paper.text(options.width/2, options.height/2 - this.options.offsets.percent, options.activeStep / options.steps.length * 100 + '%').attr({
+            'font-size' : this.options.fontSize.percent,
             fill : this.options.colors.pourcent,
-            'font-family' : this.options.percentFontFamily
+            'font-family' : this.options.fontFamily.percent
         });
 
         this.drawStepsState();
@@ -26,20 +26,20 @@ class Stepper {
     drawStepsState(){
         this.labels = [];
         this.options.steps.forEach((x, index) => {
-            let size = this.options.labelFontSize,
+            let size = this.options.fontSize.label,
                 color = this.options.colors.label,
-                height = this.options.height/2 + this.options.labelOffset,
+                height = this.options.height/2 + this.options.offsets.label,
                 opacity = 1;
 
             if(index + 1 === this.options.activeStep - 1){
                 color = this.options.colors.unselectedLabel;
-                height -= this.options.unselectedOffset;
-                size = this.options.unselectedFontSize;
+                height -= this.options.offsets.unselected;
+                size = this.options.fontSize.unselected;
                 opacity = this.options.unselectedOpacity;
             } else if(index + 1 === this.options.activeStep + 1){
                 color = this.options.colors.unselectedLabel;
-                height += this.options.unselectedOffset;
-                size = this.options.unselectedFontSize;
+                height += this.options.offsets.unselected;
+                size = this.options.fontSize.unselected;
                 opacity = this.options.unselectedOpacity;
             } else if(index + 1 < this.options.activeStep - 1 || index + 1 > this.options.activeStep + 1){
                 opacity = 0;
@@ -48,7 +48,7 @@ class Stepper {
             let label = this.paper.text(this.options.width/2, height, x).attr({
                 'font-size' : size, 
                 fill : color,
-                'font-family' : this.options.labelFontFamily,
+                'font-family' : this.options.fontFamily.label,
                 'opacity' : opacity
             });
             this.labels.push(label);
@@ -57,20 +57,20 @@ class Stepper {
 
     animateLabels(step){
         this.labels.forEach((x, index) => {
-            let size = this.options.labelFontSize,
+            let size = this.options.fontSize.label,
                 color = this.options.colors.label,
-                height = this.options.height/2 + this.options.labelOffset,
+                height = this.options.height/2 + this.options.offsets.label,
                 opacity = 1;
 
             if(index + 1 === step - 1){
                 color = this.options.colors.unselectedLabel;
-                height -= this.options.unselectedOffset;
-                size = this.options.unselectedFontSize;
+                height -= this.options.offsets.unselected;
+                size = this.options.fontSize.unselected;
                 opacity = this.options.unselectedOpacity;
             } else if(index + 1 === step + 1){
                 color = this.options.colors.unselectedLabel;
-                height += this.options.unselectedOffset;
-                size = this.options.unselectedFontSize;
+                height += this.options.offsets.unselected;
+                size = this.options.fontSize.unselected;
                 opacity = this.options.unselectedOpacity;
             } else if(index + 1 !== step){
                 opacity = 0;
@@ -80,9 +80,9 @@ class Stepper {
                 'y' : height,
                 'font-size' : size, 
                 fill : color,
-                'font-family' : this.options.labelFontFamily,
+                'font-family' : this.options.fontFamily.label,
                 'opacity' : opacity
-            }, this.options.swapTime * 1000);
+            }, this.options.transitionTime * 1000);
         });
     }
 
@@ -122,7 +122,7 @@ class Stepper {
                 setTimeout(() => {
                     this.tinyStep(current + counter * innerStep);
                     this.tinyNumberStep(Math.round(pcCurrent + pcStep * counter));
-                }, counter * this.options.swapTime * 1000 / 20);
+                }, counter * this.options.transitionTime * 1000 / 20);
             }.call(this));
         };
 
@@ -134,8 +134,8 @@ class Stepper {
     }
 
     tinyStep(miniStep){
-        let path2 = this.sector(true, this.options.width/2, this.options.height/2, this.options.width/2 - this.options.strokeWidth, 90, miniStep, {stroke : this.options.colors.inner, 'stroke-width' : this.options.strokeWidth - 6});
-        this.circle.animate({path: path2}, this.options.swapTime * 1000 / 20);
+        let path2 = this.sector(true, this.options.width/2, this.options.height/2, this.options.width/2 - this.options.strokeWidth.bcg, 90, miniStep, {stroke : this.options.colors.inner, 'stroke-width' : this.options.strokeWidth.bcg - 6});
+        this.circle.animate({path: path2}, this.options.transitionTime * 1000 / 20);
     }
 
     update(camera) {

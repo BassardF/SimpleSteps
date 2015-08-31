@@ -10,24 +10,24 @@ var Stepper = (function () {
     function Stepper(options) {
         _classCallCheck(this, Stepper);
 
-        this.paper = Raphael(document.getElementById(options.id), options.width, options.height);
-        this.bcgCircle = this.paper.circle(options.width / 2, options.height / 2, options.width / 2 - options.strokeWidth).attr({
+        this.paper = Raphael(document.getElementById(options.canvasId), options.width, options.height);
+        this.bcgCircle = this.paper.circle(options.width / 2, options.height / 2, options.width / 2 - options.strokeWidth.bcg).attr({
             stroke: options.colors.bcg,
-            'stroke-width': options.strokeWidth
+            'stroke-width': options.strokeWidth.bcg
         });
         this.options = options;
         var stepPct = options.activeStep / options.steps.length;
         if (stepPct === 1) {
             stepPct = 0.9999;
         }
-        this.circle = this.sector(false, options.width / 2, options.height / 2, options.width / 2 - options.strokeWidth, 90, stepPct * 360 + 90, {
+        this.circle = this.sector(false, options.width / 2, options.height / 2, options.width / 2 - options.strokeWidth.bcg, 90, stepPct * 360 + 90, {
             stroke: options.colors.inner,
-            'stroke-width': options.innerStrokeWidth
+            'stroke-width': options.strokeWidth.inner
         });
-        this.percent = this.paper.text(options.width / 2, options.height / 2 - this.options.percentOffset, options.activeStep / options.steps.length * 100 + '%').attr({
-            'font-size': this.options.pecentFontSize,
+        this.percent = this.paper.text(options.width / 2, options.height / 2 - this.options.offsets.percent, options.activeStep / options.steps.length * 100 + '%').attr({
+            'font-size': this.options.fontSize.percent,
             fill: this.options.colors.pourcent,
-            'font-family': this.options.percentFontFamily
+            'font-family': this.options.fontFamily.percent
         });
 
         this.drawStepsState();
@@ -40,20 +40,20 @@ var Stepper = (function () {
 
             this.labels = [];
             this.options.steps.forEach(function (x, index) {
-                var size = _this.options.labelFontSize,
+                var size = _this.options.fontSize.label,
                     color = _this.options.colors.label,
-                    height = _this.options.height / 2 + _this.options.labelOffset,
+                    height = _this.options.height / 2 + _this.options.offsets.label,
                     opacity = 1;
 
                 if (index + 1 === _this.options.activeStep - 1) {
                     color = _this.options.colors.unselectedLabel;
-                    height -= _this.options.unselectedOffset;
-                    size = _this.options.unselectedFontSize;
+                    height -= _this.options.offsets.unselected;
+                    size = _this.options.fontSize.unselected;
                     opacity = _this.options.unselectedOpacity;
                 } else if (index + 1 === _this.options.activeStep + 1) {
                     color = _this.options.colors.unselectedLabel;
-                    height += _this.options.unselectedOffset;
-                    size = _this.options.unselectedFontSize;
+                    height += _this.options.offsets.unselected;
+                    size = _this.options.fontSize.unselected;
                     opacity = _this.options.unselectedOpacity;
                 } else if (index + 1 < _this.options.activeStep - 1 || index + 1 > _this.options.activeStep + 1) {
                     opacity = 0;
@@ -62,7 +62,7 @@ var Stepper = (function () {
                 var label = _this.paper.text(_this.options.width / 2, height, x).attr({
                     'font-size': size,
                     fill: color,
-                    'font-family': _this.options.labelFontFamily,
+                    'font-family': _this.options.fontFamily.label,
                     'opacity': opacity
                 });
                 _this.labels.push(label);
@@ -74,20 +74,20 @@ var Stepper = (function () {
             var _this2 = this;
 
             this.labels.forEach(function (x, index) {
-                var size = _this2.options.labelFontSize,
+                var size = _this2.options.fontSize.label,
                     color = _this2.options.colors.label,
-                    height = _this2.options.height / 2 + _this2.options.labelOffset,
+                    height = _this2.options.height / 2 + _this2.options.offsets.label,
                     opacity = 1;
 
                 if (index + 1 === step - 1) {
                     color = _this2.options.colors.unselectedLabel;
-                    height -= _this2.options.unselectedOffset;
-                    size = _this2.options.unselectedFontSize;
+                    height -= _this2.options.offsets.unselected;
+                    size = _this2.options.fontSize.unselected;
                     opacity = _this2.options.unselectedOpacity;
                 } else if (index + 1 === step + 1) {
                     color = _this2.options.colors.unselectedLabel;
-                    height += _this2.options.unselectedOffset;
-                    size = _this2.options.unselectedFontSize;
+                    height += _this2.options.offsets.unselected;
+                    size = _this2.options.fontSize.unselected;
                     opacity = _this2.options.unselectedOpacity;
                 } else if (index + 1 !== step) {
                     opacity = 0;
@@ -97,9 +97,9 @@ var Stepper = (function () {
                     'y': height,
                     'font-size': size,
                     fill: color,
-                    'font-family': _this2.options.labelFontFamily,
+                    'font-family': _this2.options.fontFamily.label,
                     'opacity': opacity
-                }, _this2.options.swapTime * 1000);
+                }, _this2.options.transitionTime * 1000);
             });
         }
     }, {
@@ -142,7 +142,7 @@ var Stepper = (function () {
                     setTimeout(function () {
                         _this3.tinyStep(current + counter * innerStep);
                         _this3.tinyNumberStep(Math.round(pcCurrent + pcStep * counter));
-                    }, counter * this.options.swapTime * 1000 / 20);
+                    }, counter * this.options.transitionTime * 1000 / 20);
                 }).call(this);
             };
 
@@ -156,8 +156,8 @@ var Stepper = (function () {
     }, {
         key: 'tinyStep',
         value: function tinyStep(miniStep) {
-            var path2 = this.sector(true, this.options.width / 2, this.options.height / 2, this.options.width / 2 - this.options.strokeWidth, 90, miniStep, { stroke: this.options.colors.inner, 'stroke-width': this.options.strokeWidth - 6 });
-            this.circle.animate({ path: path2 }, this.options.swapTime * 1000 / 20);
+            var path2 = this.sector(true, this.options.width / 2, this.options.height / 2, this.options.width / 2 - this.options.strokeWidth.bcg, 90, miniStep, { stroke: this.options.colors.inner, 'stroke-width': this.options.strokeWidth.bcg - 6 });
+            this.circle.animate({ path: path2 }, this.options.transitionTime * 1000 / 20);
         }
     }, {
         key: 'update',
