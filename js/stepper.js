@@ -1,6 +1,6 @@
 class Stepper {
     constructor(options) {
-        this.paper = Raphael(document.getElementById(options.canvasId), options.width, options.height);
+        this.paper = new Raphael(document.getElementById(options.canvasId), options.width, options.height);
         this.bcgCircle = this.paper.circle(options.width/2, options.height/2, options.width/2 - options.strokeWidth.bcg).attr({
             stroke : options.colors.bcg,
             'stroke-width' : options.strokeWidth.bcg
@@ -107,24 +107,24 @@ class Stepper {
 
         let current = this.options.activeStep / this.options.steps.length * 360 + 90,
             target = targetStp * 360 + 90,
-            innerStep = (target - current) / 20;
+            innerStep = (target - current) / 40;
 
         let pcCurrent = this.options.activeStep / this.options.steps.length * 100,
             pcTarget = step / this.options.steps.length * 100,
-            pcStep = (pcTarget - pcCurrent) / 20;
+            pcStep = (pcTarget - pcCurrent) / 40;
 
 
         this.animateLabels(step);
 
-        for (var i = 1; i <= 20; i++) {
+        for (var i = 1; i <= 40; i++) {
             (function(){
                 let counter = i;
                 setTimeout(() => {
                     this.tinyStep(current + counter * innerStep);
                     this.tinyNumberStep(Math.round(pcCurrent + pcStep * counter));
-                }, counter * this.options.transitionTime * 1000 / 20);
+                }, counter * this.options.transitionTime * 1000 / 40);
             }.call(this));
-        };
+        }
 
         this.options.activeStep = step;
     }
@@ -135,10 +135,12 @@ class Stepper {
 
     tinyStep(miniStep){
         let path2 = this.sector(true, this.options.width/2, this.options.height/2, this.options.width/2 - this.options.strokeWidth.bcg, 90, miniStep, {stroke : this.options.colors.inner, 'stroke-width' : this.options.strokeWidth.bcg - 6});
-        this.circle.animate({path: path2}, this.options.transitionTime * 1000 / 20);
+        this.circle.animate({path: path2}, this.options.transitionTime * 1000 / 40);
     }
 
     update(camera) {
         super.update();
     }
 }
+
+module.exports = Stepper;
